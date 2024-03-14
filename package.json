@@ -1,0 +1,43 @@
+{
+	"name": "line-bot",
+	"version": "1.0.0",
+	"description": "Yu's line bot",
+	"main": "app.ts",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+        "ejs": "robocopy /s /e ./src/views ./dist/views"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/wonbin1230/line-bot.git"
+	},
+	"keywords": [
+		"line-bot"
+	],
+	"author": "Yu",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/wonbin1230/line-bot/issues"
+	},
+	"homepage": "https://github.com/wonbin1230/line-bot#readme",
+	"dependencies": {
+		"@line/bot-sdk": "^8.4.0",
+		"cookie-parser": "^1.4.6",
+		"cors": "^2.8.5",
+		"ejs": "^3.1.9",
+		"express": "^4.18.2",
+		"mongoose": "^8.1.3"
+	},
+	"devDependencies": {
+		"@types/cookie-parser": "^1.4.3",
+		"@types/cors": "^2.8.13",
+		"@types/express": "^4.17.17",
+		"@types/fluent-ffmpeg": "^2.1.21",
+		"@types/node": "^20.5.6",
+		"@typescript-eslint/eslint-plugin": "^6.4.1",
+		"@typescript-eslint/parser": "^6.4.1",
+		"eslint": "^8.47.0",
+		"ts-node": "^10.9.1",
+		"typescript": "^5.2.2"
+	}
+}

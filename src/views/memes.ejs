@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/versions/2.22.3/sdk.js"></script>
+    <script src="https://unpkg.com/fabric@5.3.0/dist/fabric.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    <title><%=title%></title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+    .container {
+        width: 100%;
+        height: 90vh;
+    }
+    .add-text-area > button {
+        width: 100%;
+        height: 50px;
+        font-size: 30px;
+        font-weight: bolder;
+        color: black;
+        background-color: lightgreen;
+        border: 0;
+    }
+    #text-boxes {
+        overflow-y: auto;
+    }
+    .group {
+        width: 100%;
+    }
+    .group:nth-child(even) {
+        background-color: lightgray;
+    }
+    .gen-image-area {
+        display: flex;
+        width: 100%;
+        height: 10vh;
+        align-items: end;
+    }
+    .gen-image-area > button {
+        width: 100%;
+        height: 100%;
+        font-size: 30px;
+        font-weight: bolder;
+        color: black;
+        background-color: lightblue;
+        border: 0;
+    }
+</style>
+<body>
+    <div class="container">
+        <canvas id="c"></canvas>
+        <div class="add-text-area">
+            <button onclick="addTextBox()"><i class="fa-solid fa-pen"></i>新增文字區塊</button>
+        </div>
+        <div id="text-boxes"></div>
+    </div>
+    <div class="gen-image-area">
+        <button onclick="shareImage()"><i class="fa-solid fa-share"></i>分享給好友</button>
+    </div>
+</body>
+<script>
+    (async function() {
+        await liff.init({ liffId: "2004035309-EdReblAM" });
+        if (!liff.isLoggedIn()) liff.login({ redirectUri: window.location.href });
+        console.log(await liff.getProfile());
+    })();
+
+    const canvas = document.getElementById("c");
+    const container = document.getElementsByClassName("container")[0];
+    const textBoxesElement = document.getElementById("text-boxes");
+    const addTextArea = document.getElementsByClassName("add-text-area")[0];
+    canvas.width = container.offsetWidth;
+    canvas.height = (container.offsetHeight / 2) - 20;
+    const textBoxesMaxHeight = container.offsetHeight - canvas.offsetHeight - addTextArea.offsetHeight;
+    textBoxesElement.style.maxHeight = `${textBoxesMaxHeight}px`;
+    const fabricCanvas = new fabric.Canvas("c");
+
+    if ("<%=name%>") localStorage.setItem("name", "<%=name%>");
+    const imageName = localStorage.getItem("name");
+
+    if (imageName) {
+        const imageUrl = `https://yu-website.duckdns.org/linebot/memes?name=${imageName}`;
+        const backgroundImage = new Image();
+        backgroundImage.src = imageUrl;
+        backgroundImage.onload = function() {
+            fabricCanvas.setBackgroundImage(backgroundImage.src, fabricCanvas.renderAll.bind(fabricCanvas), {
+                scaleX: backgroundImage.width > fabricCanvas.width ? fabricCanvas.width / backgroundImage.width : 1,
+                scaleY: backgroundImage.height > fabricCanvas.height ? fabricCanvas.height / backgroundImage.height : 1
+            });
+        }
+    }
+
+    const textBoxes = [];
+    fabricCanvas.on("after:render", () => {
+        for (let i = 0; i < textBoxes.length; i++) {
+            const ele = textBoxes[i];
+            const title = document.getElementById(`item-title${i}`);
+            title.innerText = ele.text;
+        }
+    });
+
+    const addTextBox = () => {
+        const newIndex = textBoxes.length;
+        const text = new fabric.Textbox(`文字區塊${newIndex + 1}`, {
+            left: 100,
+            top: 100,
+            fontWeight: "bolder",
+            textStrokeWidth: 10,
+            fill: "#FFFFFF",
+            fontSize: 35
+        });
+        fabricCanvas.add(text);
+        textBoxes.push(text);
+        addTextBoxActionGroup(newIndex);
+    };
+
+    const rgbHexList = ["#FFFFFF", "#000000", "#FF0000", "#FF8000", "#FFFF00", "#80FF00", "#00FF00", "#00FF80", "#00FFFF", "#0080FF",
+                    "#0000FF", "#7F00FF", "#FF00FF", "#FF007F", "#808080", "#FFCCCC", "#FFFFCC", "#CCFFE5", "#CCCCFF", "#FFCCFF"];
+    const addTextBoxActionGroup = (i) => {
+        const group = document.createElement("div");
+        group.className = `group item${i}`;
+        const appendHtml = `<h2 id="item-title${i}" style="text-align: center;">${textBoxes[i].text}</h2>` +
+                            `<div style="display: flex; justify-content: space-between; margin: 0 10px;">` +
+                                `<h3 style="text-align: center;">字型大小：</h3>` +
+                                `<button onclick="handleFontSize('minus', '${i}')" style="width: 100px; text-align: center; background-color: #FF6666; border: 0;"><i class="fa-solid fa-minus"></i></button>` +
+                                `<button onclick="handleFontSize('plus', '${i}')" style="width: 100px; text-align: center; background-color: #33FF99; border: 0;"><i class="fa-solid fa-plus"></i></button>` +
+                            `</div>` +
+                            `<div id="item-color${i}" style="display: flex; flex-wrap: wrap; gap: 10px 5px; margin: 5px 10px 0 10px;"></div>`
+        group.innerHTML = appendHtml;
+        textBoxesElement.appendChild(group);
+
+        const itemColor = document.getElementById(`item-color${i}`);
+        for (let j = 0; j < rgbHexList.length; j++) {
+            const ele = rgbHexList[j];
+            const colorDiv = document.createElement("div");
+            colorDiv.style.backgroundColor = ele;
+            colorDiv.style.width = "30px";
+            colorDiv.style.height = "30px";
+            colorDiv.style.border = "1px solid #000000";
+            colorDiv.setAttribute("onclick", `handleFontColor("${ele}", "${i}")`);
+            itemColor.appendChild(colorDiv);
+        }
+    };
+
+    const shareImage = async () => {
+        const dataURL = fabricCanvas.toDataURL({ format: "png", quality: 1.0 });
+        const res = await fetch("/linebot/liff", {
+            headers: {
+                "Content-Type": "application/json"
+            },
+            method: "POST",
+            body: JSON.stringify({ data: dataURL })
+        })
+        const resImage = await res.json();
+        const url = `https://yu-website.duckdns.org/linebot/liff?id=${resImage._id}`;
+
+        if (!liff.isLoggedIn()) liff.login({ redirectUri: window.location.href });
+        liff
+            .shareTargetPicker(
+                [{ type: "image", originalContentUrl: url, previewImageUrl: url }],
+                { isMultiple: true },
+            )
+            .then(() => {
+                // liff.closeWindow();
+            })
+            .catch((error) => console.log(`something went wrong: ${error.message || error}`));
+    };
+
+    const dataURItoBlob = (dataURI) => {
+        let byteString;
+        if (dataURI.split(",")[0].indexOf("base64") >= 0)
+            byteString = atob(dataURI.split(",")[1]);
+        else
+            byteString = unescape(dataURI.split(",")[1]);
+
+        let mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
+
+        let ia = new Uint8Array(byteString.length);
+        for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+
+        return new Blob([ia], { type: mimeString });
+    }
+
+    const handleFontSize = (method, i) => {
+        method === "plus" ? textBoxes[i].fontSize += 2 : textBoxes[i].fontSize -= 2;
+        fabricCanvas.renderAll();
+    };
+
+    const handleFontColor = (rgbHexCode, i) => {
+        textBoxes[i].set("fill", rgbHexCode);
+        fabricCanvas.renderAll();
+    };
+
+</script>
+</html>
