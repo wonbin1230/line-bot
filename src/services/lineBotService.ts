@@ -8,7 +8,7 @@ import { genFlexMessageModel } from "../models/lineBot/flexMessageModel";
 
 class MessageService {
     async main(event: IWebhookEvent): Promise<void> {
-        if (event.message.text.startsWith("/list")) {
+        if (typeof event.message.text === "string" && event.message.text.startsWith("/list")) {
             return this.#getList(event.replyToken, event.message.text);
         }
 

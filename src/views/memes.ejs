@@ -13,129 +13,313 @@
     * {
         margin: 0;
         padding: 0;
+        box-sizing: border-box;
     }
-    .container {
-        width: 100%;
-        height: 90vh;
-    }
-    .add-text-area > button {
-        width: 100%;
-        height: 50px;
-        font-size: 30px;
-        font-weight: bolder;
-        color: black;
-        background-color: lightgreen;
-        border: 0;
-    }
-    #text-boxes {
+    body {
+        background-color: black;
         overflow-y: auto;
     }
-    .group {
+    textarea {
+        resize: none;
+    }
+    .container {
+        background-color: #0e1538;
+        width: 420px;
+        height: 100vh;
+        margin: 0 auto;
+    }
+    .origin-action-area {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 50px;
+    }
+    .add-border-btn{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50%;
+        height: 50px;
+        font-size: 25px;
+        font-weight: bolder;
+        color: #FFFFFF;
+        background-color: #FF3333;
+        border: 0;
+        cursor: pointer;
+    }
+    .add-text-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50%;
+        height: 50px;
+        font-size: 25px;
+        font-weight: bolder;
+        color: #FFFFFF;
+        background-color: #FF3333;
+        border: 0;
+        cursor: pointer;
+    }
+    #border-area {
+        display: none;
+        width: 100%;
+        height: 50px;
+        font-size: 20px;
+        font-weight: bold;
+        color: white;
+        background-color: #0e1538;
+    }
+    #sub-border-area {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
         width: 100%;
     }
-    .group:nth-child(even) {
-        background-color: lightgray;
+    #text-boxes {
+        overflow-x: hidden;
+        overflow-y: auto;
+        background-color: #0e1538;
+    }
+    ::-webkit-scrollbar {
+        width: 0;
+        background: transparent;
+    }
+    .group {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        padding: 15px 0;
+        margin-top: 1px;
+        position: relative;
+        background-color: #0e1538;
+        border-radius: 5px;
+    }
+    .sub-group {
+        z-index: 999;
+    }
+    .group::before {
+        position: absolute;
+        content: "";
+        width: 101%;
+        height: 101%;
+        background-color: tomato;
+        transition: 0.3s;
+        animation: text-area-animate 2s linear infinite;
+        border-radius: 5px;
+    }
+    .group::after {
+        position: absolute;
+        content: "";
+        width: 98%;
+        height: 96%;
+        overflow: hidden;
+        background-color: #0e1538;
+        border-radius: 5px;
+    }
+    @keyframes text-area-animate {
+        50% {
+            filter: hue-rotate(350deg);
+        }
     }
     .gen-image-area {
         display: flex;
         width: 100%;
-        height: 10vh;
+        height: 80px;
+        margin: 0 auto;
         align-items: end;
+        background-color: #0e1538;
     }
-    .gen-image-area > button {
+    .gen-image-button {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         width: 100%;
         height: 100%;
+        background-color: #0e1538;
+        cursor: pointer;
+        overflow: hidden;
+        border-radius: 5px;
+    }
+    .gen-image-button > h2 {
+        color: white;
         font-size: 30px;
         font-weight: bolder;
-        color: black;
-        background-color: lightblue;
-        border: 0;
+        z-index: 999;
+    }
+    .gen-image-button::before {
+        content: "";
+        position: absolute;
+        width: 15%;
+        height: 600%;
+        background: linear-gradient(#00ccff, #d500f9);
+        animation: linear-rotate 4s linear infinite;
+    }
+    .gen-image-button::after {
+        content: "";
+        position: absolute;
+        background-color: #00b900;
+        inset: 3px;
+        border-radius: inherits;
+        border-radius: 5px;
+    }
+    @keyframes linear-rotate {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+    @media (max-width: 480px) {
+        .container {
+            width: 100%;
+            height: 100dvh;
+            margin: 0;
+        }
     }
 </style>
 <body>
     <div class="container">
         <canvas id="c"></canvas>
-        <div class="add-text-area">
-            <button onclick="addTextBox()"><i class="fa-solid fa-pen"></i>新增文字區塊</button>
+        <div class="origin-action-area">
+            <div class="add-text-btn" onclick="addTextBox()"><i class="fa-solid fa-pen"></i>新增文字區塊</div>
+            <div class="add-border-btn" onclick="toggleBorderArea()"><i class="fa-solid fa-border-all"></i>新增邊界</div>
+        </div>
+        <div id="border-area">
+            <div id="sub-border-area">
+                <div>
+                    <label for="type">種類:</label>
+                    <select name="type" id="type" onchange="editBorder('type', this.value)">
+                        <option value="none">無</option>
+                        <option value="top">上</option>
+                        <option value="bottom">下</option>
+                        <option value="both">上及下</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="size">大小:</label>
+                    <select name="size" id="size" onchange="editBorder('size', this.value)">
+                        <option value="60">小</option>
+                        <option value="90">中</option>
+                        <option value="120">大</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="color">顏色:</label>
+                    <select name="color" id="color" onchange="editBorder('color', this.value)">
+                        <option value="#000000">黑</option>
+                        <option value="#FFFFFF">白</option>
+                    </select>
+                </div>
+            </div>
         </div>
         <div id="text-boxes"></div>
-    </div>
-    <div class="gen-image-area">
-        <button onclick="shareImage()"><i class="fa-solid fa-share"></i>分享給好友</button>
+        <div class="gen-image-area">
+            <div class="gen-image-button" onclick="shareImage()">
+                <h2>
+                    <i class="fa-solid fa-share"></i>分享給好友
+                </h2>
+            </div>
+        </div>
     </div>
 </body>
 <script>
     (async function() {
         await liff.init({ liffId: "2004035309-EdReblAM" });
         if (!liff.isLoggedIn()) liff.login({ redirectUri: window.location.href });
-        console.log(await liff.getProfile());
     })();
 
     const canvas = document.getElementById("c");
     const container = document.getElementsByClassName("container")[0];
     const textBoxesElement = document.getElementById("text-boxes");
-    const addTextArea = document.getElementsByClassName("add-text-area")[0];
-    canvas.width = container.offsetWidth;
-    canvas.height = (container.offsetHeight / 2) - 20;
-    const textBoxesMaxHeight = container.offsetHeight - canvas.offsetHeight - addTextArea.offsetHeight;
-    textBoxesElement.style.maxHeight = `${textBoxesMaxHeight}px`;
+    const originActionArea = document.getElementsByClassName("origin-action-area")[0];
+    const borderArea = document.getElementById("border-area");
+    const genImageArea = document.getElementsByClassName("gen-image-area")[0];
     const fabricCanvas = new fabric.Canvas("c");
+
+    const rgbHexList = ["#FFFFFF", "#000000", "#FF0000", "#FF8000", "#FFFF00", "#80FF00", "#00FF00", "#00FF80", "#00FFFF", "#0080FF",
+                    "#0000FF", "#7F00FF", "#FF00FF", "#FF007F", "#808080", "#FFCCCC", "#FFFFCC", "#CCFFE5", "#CCCCFF", "#FFCCFF"];
+
+    if ("<%=title%>") localStorage.setItem("title", "<%=title%>");
+    document.getElementsByTagName("title")[0].innerText = localStorage.getItem("title");
 
     if ("<%=name%>") localStorage.setItem("name", "<%=name%>");
     const imageName = localStorage.getItem("name");
 
+    const borderState = {
+        type: "none",
+        size: "60",
+        color: "#000000"
+    };
     if (imageName) {
         const imageUrl = `https://yu-website.duckdns.org/linebot/memes?name=${imageName}`;
         const backgroundImage = new Image();
         backgroundImage.src = imageUrl;
         backgroundImage.onload = function() {
+            canvas.width = container.offsetWidth;
+            canvas.height = getImageResizeHeight(canvas.width, backgroundImage.width, backgroundImage.height);
+            fabricCanvas.setWidth(canvas.width);
+            fabricCanvas.setHeight(canvas.height);
+            borderState["originCanvasHeight"] = fabricCanvas.height;
             fabricCanvas.setBackgroundImage(backgroundImage.src, fabricCanvas.renderAll.bind(fabricCanvas), {
                 scaleX: backgroundImage.width > fabricCanvas.width ? fabricCanvas.width / backgroundImage.width : 1,
                 scaleY: backgroundImage.height > fabricCanvas.height ? fabricCanvas.height / backgroundImage.height : 1
             });
+            const textBoxesMaxHeight = container.offsetHeight - canvas.offsetHeight - originActionArea.offsetHeight - genImageArea.offsetHeight;
+            textBoxesElement.style.height = `${textBoxesMaxHeight}px`;
+            // textBoxesElement.style.maxHeight = `${textBoxesMaxHeight}px`;
         }
+        addTextBox();
     }
 
-    const textBoxes = [];
-    fabricCanvas.on("after:render", () => {
-        for (let i = 0; i < textBoxes.length; i++) {
-            const ele = textBoxes[i];
-            const title = document.getElementById(`item-title${i}`);
-            title.innerText = ele.text;
-        }
-    });
-
-    const addTextBox = () => {
-        const newIndex = textBoxes.length;
-        const text = new fabric.Textbox(`文字區塊${newIndex + 1}`, {
+    function addTextBox() {
+        const canvasObjects = fabricCanvas.getObjects().filter(obj => obj.__proto__.type === "textbox");
+        const index = canvasObjects.length;
+        const customId = Math.random().toString().substring(2);
+        const text = new fabric.Textbox(`文字區塊${index + 1}`, {
             left: 100,
             top: 100,
-            fontWeight: "bolder",
+            fontWeight: "bold",
             textStrokeWidth: 10,
-            fill: "#FFFFFF",
-            fontSize: 35
+            fill: "#000000",
+            fontSize: 35,
+            editable: false,
+            textAlign: "center",
+            customId
         });
         fabricCanvas.add(text);
-        textBoxes.push(text);
-        addTextBoxActionGroup(newIndex);
-    };
+        addTextBoxActionGroup(customId);
+    }
 
-    const rgbHexList = ["#FFFFFF", "#000000", "#FF0000", "#FF8000", "#FFFF00", "#80FF00", "#00FF00", "#00FF80", "#00FFFF", "#0080FF",
-                    "#0000FF", "#7F00FF", "#FF00FF", "#FF007F", "#808080", "#FFCCCC", "#FFFFCC", "#CCFFE5", "#CCCCFF", "#FFCCFF"];
-    const addTextBoxActionGroup = (i) => {
+    function addTextBoxActionGroup(customId) {
+        let targetTextBox;
+        fabricCanvas.getObjects().forEach(ele => {
+            if (ele.customId === customId) targetTextBox = ele;
+        });
         const group = document.createElement("div");
-        group.className = `group item${i}`;
-        const appendHtml = `<h2 id="item-title${i}" style="text-align: center;">${textBoxes[i].text}</h2>` +
-                            `<div style="display: flex; justify-content: space-between; margin: 0 10px;">` +
-                                `<h3 style="text-align: center;">字型大小：</h3>` +
-                                `<button onclick="handleFontSize('minus', '${i}')" style="width: 100px; text-align: center; background-color: #FF6666; border: 0;"><i class="fa-solid fa-minus"></i></button>` +
-                                `<button onclick="handleFontSize('plus', '${i}')" style="width: 100px; text-align: center; background-color: #33FF99; border: 0;"><i class="fa-solid fa-plus"></i></button>` +
-                            `</div>` +
-                            `<div id="item-color${i}" style="display: flex; flex-wrap: wrap; gap: 10px 5px; margin: 5px 10px 0 10px;"></div>`
+        group.className = "group";
+        group.id = customId;
+        const appendHtml =  `<div class="sub-group">` +
+                                `<div style="display: flex; margin-bottom: 5px; min-height: 40px; padding: 5px; padding: 5px 12px;">` +
+                                    `<textarea id="textarea${customId}" oninput="updateTextBox('${customId}', this)" style="flex-grow: 1; font-size: 16px;" row="2">${targetTextBox.text}</textarea>` +
+                                    `<div onclick="removeTextBox('${customId}')" style="width: 30px;"><i class="fa-solid fa-xmark" style="color: #ff0000; font-size: xx-large; cursor: pointer;"></i></div>` +
+                                `</div>` +
+                                `<div style="display: flex; justify-content: space-between; margin: 0 10px;">` +
+                                    `<h3 style="text-align: center; color: white;">字型大小：</h3>` +
+                                    `<button onclick="handleFontSize('minus', '${customId}')" style="width: 100px; text-align: center; background-color: #FF3333; color: white; border: 0; cursor: pointer;"><i class="fa-solid fa-minus"></i></button>` +
+                                    `<button onclick="handleFontSize('plus', '${customId}')" style="width: 100px; text-align: center; background-color: #00b900; color: white; border: 0; cursor: pointer;"><i class="fa-solid fa-plus"></i></button>` +
+                                    `<span style="width: cale(1% - 5px);"></span>` +
+                                `</div>` +
+                                `<div id="item-color${customId}" style="display: flex; flex-wrap: wrap; gap: 10px 5px; margin: 5px 15px 0 10px; cursor: pointer;"></div>` +
+                            `</div>`
         group.innerHTML = appendHtml;
         textBoxesElement.appendChild(group);
 
-        const itemColor = document.getElementById(`item-color${i}`);
+        const itemColor = document.getElementById(`item-color${customId}`);
         for (let j = 0; j < rgbHexList.length; j++) {
             const ele = rgbHexList[j];
             const colorDiv = document.createElement("div");
@@ -143,12 +327,80 @@
             colorDiv.style.width = "30px";
             colorDiv.style.height = "30px";
             colorDiv.style.border = "1px solid #000000";
-            colorDiv.setAttribute("onclick", `handleFontColor("${ele}", "${i}")`);
+            colorDiv.setAttribute("onclick", `handleFontColor("${ele}", "${customId}")`);
             itemColor.appendChild(colorDiv);
         }
-    };
+    }
 
-    const shareImage = async () => {
+    function toggleBorderArea() {
+        let newTextBoxesMaxHeight = 0;
+        if (!borderArea.style.display || borderArea.style.display === "none") {
+            borderArea.style.display = "flex";
+            borderArea.style.alignItems = "center";
+            borderArea.style.justifyContent = "center";
+            newTextBoxesMaxHeight = container.offsetHeight - canvas.offsetHeight - originActionArea.offsetHeight - genImageArea.offsetHeight - borderArea.offsetHeight;
+        } else {
+            borderArea.style.display = "none";
+            newTextBoxesMaxHeight = container.offsetHeight - canvas.offsetHeight - originActionArea.offsetHeight - genImageArea.offsetHeight;
+        }
+        // textBoxesElement.style.maxHeight = `${newTextBoxesMaxHeight}px`;
+        // borderState["originTextBoxesHeight"] = newTextBoxesMaxHeight;
+    }
+
+    function editBorder(type, value) {
+        borderState[type] = value;
+        fabricCanvas.getObjects().forEach(ele => {
+            if (ele.__proto__.type === "rect") fabricCanvas.remove(ele);
+        });
+
+        resizeCanvas();
+
+        const rectProps = {
+            width: fabricCanvas.width + 1,
+            height: parseInt(borderState["size"]),
+            fill: borderState["color"],
+            top: -1,
+            left: -1,
+            selectable: false
+        };
+
+        if (borderState["type"] && borderState["type"] !== "none") {
+            if (borderState["type"] === "bottom") {
+                rectProps.top = fabricCanvas.height - parseInt(borderState["size"]);
+            } else if (borderState["type"] === "both") {
+                fabricCanvas.add(new fabric.Rect(rectProps));
+                rectProps.top = fabricCanvas.height - parseInt(borderState["size"]);
+            }
+            fabricCanvas.add(new fabric.Rect(rectProps));
+            fabricCanvas.getObjects().forEach(ele => {
+                if (ele.__proto__.type === "rect") fabricCanvas.sendToBack(ele);
+            })
+        } else {
+            return;
+        }
+    }
+
+    function updateTextBox(customId, textObject) {
+        const targetTextBox = getTargetTextBox(customId);
+        targetTextBox.set("text", textObject.value);
+        fabricCanvas.renderAll();
+    }
+
+    function removeTextBox(customId) {
+        const targetTextBox = getTargetTextBox(customId);
+        fabricCanvas.remove(targetTextBox);
+        document.getElementById(customId).remove();
+        fabricCanvas.getObjects().filter(obj => obj.__proto__.type === "textbox").forEach((ele, index) => {
+            if (document.getElementById(`textarea${ele.customId}`).value.includes("文字區塊")) {
+                ele.set("text", `文字區塊${index + 1}`);
+                document.getElementById(`textarea${ele.customId}`).value = `文字區塊${index + 1}`;
+            }
+        });
+    }
+
+    async function shareImage() {
+        if (!liff.isLoggedIn()) liff.login({ redirectUri: window.location.href });
+
         const dataURL = fabricCanvas.toDataURL({ format: "png", quality: 1.0 });
         const res = await fetch("/linebot/liff", {
             headers: {
@@ -158,46 +410,60 @@
             body: JSON.stringify({ data: dataURL })
         })
         const resImage = await res.json();
-        const url = `https://yu-website.duckdns.org/linebot/liff?id=${resImage._id}`;
 
-        if (!liff.isLoggedIn()) liff.login({ redirectUri: window.location.href });
+        const userInformations = await liff.getProfile();
+
+        const url = `https://yu-website.duckdns.org/linebot/liff/shareImage?imageId=${resImage._id}&userName=${userInformations.displayName}&userId=${userInformations.userId}`;
         liff
             .shareTargetPicker(
                 [{ type: "image", originalContentUrl: url, previewImageUrl: url }],
                 { isMultiple: true },
             )
             .then(() => {
+                alert("傳送成功！");
                 // liff.closeWindow();
             })
             .catch((error) => console.log(`something went wrong: ${error.message || error}`));
-    };
-
-    const dataURItoBlob = (dataURI) => {
-        let byteString;
-        if (dataURI.split(",")[0].indexOf("base64") >= 0)
-            byteString = atob(dataURI.split(",")[1]);
-        else
-            byteString = unescape(dataURI.split(",")[1]);
-
-        let mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
-
-        let ia = new Uint8Array(byteString.length);
-        for (let i = 0; i < byteString.length; i++) {
-            ia[i] = byteString.charCodeAt(i);
-        }
-
-        return new Blob([ia], { type: mimeString });
     }
 
-    const handleFontSize = (method, i) => {
-        method === "plus" ? textBoxes[i].fontSize += 2 : textBoxes[i].fontSize -= 2;
+    function handleFontSize(method, customId) {
+        const targetTextBox = getTargetTextBox(customId);
+        method === "plus" ? targetTextBox.fontSize += 2 : targetTextBox.fontSize -= 2;
         fabricCanvas.renderAll();
-    };
+    }
 
-    const handleFontColor = (rgbHexCode, i) => {
-        textBoxes[i].set("fill", rgbHexCode);
+    function handleFontColor(rgbHexCode, customId) {
+        const targetTextBox = getTargetTextBox(customId);
+        targetTextBox.set("fill", rgbHexCode);
         fabricCanvas.renderAll();
-    };
+    }
+
+    function getImageResizeHeight(canvasWidth, imageWidth, imageHeight) {
+        const ratio = imageWidth === imageHeight ? 1 : imageWidth / imageHeight;
+        return canvasWidth / ratio;
+    }
+
+    function resizeCanvas() {
+        fabricCanvas.setHeight(borderState["originCanvasHeight"]);
+        fabricCanvas.backgroundImage.set("top", 0);
+        // textBoxesElement.style.maxHeight = `${borderState["originTextBoxesHeight"]}px`;
+
+        if (borderState["type"] === "top" || borderState["type"] === "bottom") {
+            fabricCanvas.setHeight(borderState["originCanvasHeight"] + parseInt(borderState["size"]));
+            // textBoxesElement.style.maxHeight = `${borderState["originTextBoxesHeight"] - parseInt(borderState["size"])}px`;
+        } else if (borderState["type"] === "both") {
+            fabricCanvas.setHeight(borderState["originCanvasHeight"] + parseInt(borderState["size"]) * 2);
+            // textBoxesElement.style.maxHeight = `${borderState["originTextBoxesHeight"] - parseInt(borderState["size"]) * 2}px`;
+        } else {
+            return;
+        }
+
+        if (borderState["type"] === "top" || borderState["type"] === "both") {
+            fabricCanvas.backgroundImage.set("top", parseInt(borderState["size"]));
+        }
+    }
+
+    const getTargetTextBox = (customId) => fabricCanvas.getObjects().find(obj => obj.customId === customId);
 
 </script>
 </html>

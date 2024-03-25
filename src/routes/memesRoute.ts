@@ -11,7 +11,7 @@ class MemesRoute {
 	}
 
 	initializeRoute(): void {
-        this.router.get("/", memesController);
+        this.router.get("/", memesController.main);
 	}
 }
 

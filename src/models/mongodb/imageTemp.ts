@@ -13,7 +13,7 @@ export interface IImageTemp {
 
 const imageTempSchema: Schema = new Schema<IImageTemp>({
     dataURL: { type: String, required: true },
-    createAt: { type: Date, required: true, default: Date.now, expires: 5 }
+    createAt: { type: Date, required: true, default: Date.now, expires: 86400 }
 });
 
 export { imageTempModelSchema };

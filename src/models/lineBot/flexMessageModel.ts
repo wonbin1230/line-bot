@@ -34,6 +34,7 @@ export const genFlexMessageModel = (images: Array<IFlexMessageArgs>): FlexContai
 		const ele: IFlexMessageArgs = images[i];
 		flexContainer.contents.push({
 			type: "bubble",
+            size: "kilo",
 			hero: {
 				type: "image",
 				url: ele.originImgUrl,

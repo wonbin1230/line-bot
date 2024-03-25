@@ -12,7 +12,7 @@ class LinebotRoute {
 	}
 
 	initializeRoute(): void {
-        this.router.post("/", lineBotMiddleware, lineBotController);
+        this.router.post("/", lineBotMiddleware, lineBotController.main);
 	}
 }
 

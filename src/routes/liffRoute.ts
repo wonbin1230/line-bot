@@ -11,8 +11,9 @@ class LiffRoute {
 	}
 
 	initializeRoute(): void {
-        this.router.get("/", liffController.main);
+        this.router.get("/", liffController.main.bind(liffController));
         this.router.post("/", liffController.saveDataURL);
+        this.router.get("/shareImage", liffController.shareImageById);
 	}
 }
 

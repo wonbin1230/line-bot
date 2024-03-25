@@ -4,17 +4,21 @@ import type { IWebhookEvent } from "../models/lineBot/lineBotModel";
 
 import { messageService } from "../services/lineBotService";
 
-export const lineBotController = async (req: Request, res: Response): Promise<void> => {
-    try {
-        const lineRespones: WebhookRequestBody = req.body as WebhookRequestBody;
-        const event: IWebhookEvent = lineRespones.events[0] as IWebhookEvent;
+class LineBotController {
+    async main(req: Request, res: Response): Promise<void> {
+        try {
+            const lineRespones: WebhookRequestBody = req.body as WebhookRequestBody;
+            const event: IWebhookEvent = lineRespones.events[0] as IWebhookEvent;
 
-        if (event.type === "message") {
-            await messageService.main(event);
+            if (event.type === "message") {
+                await messageService.main(event);
+            }
+            res.json();
         }
-        res.json();
+        catch (error) {
+            console.log(`lineBotController error: ${error.message}`);
+        }
     }
-    catch (error) {
-        console.log(`lineBotController error: ${error.message}`);
-    }
-};
+}
+
+export const lineBotController: LineBotController = new LineBotController();
